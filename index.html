@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lấy Email Ảo</title>
+</head>
+
+<body>
+    <header>
+        <button id="getEmailButton">Random Email</button>
+        <button id="copyAllEmailButton">Copy All Email</button>
+    </header>
+    <div class="container">
+        <ul id="emailList"></ul>
+        <ul id="codeList"></ul>
+    </div>
+    <script src="email.js"></script>
+    <style>
+        header {
+            max-width: 600px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            height: 100%;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 8px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.473);
+        }
+
+        #emailList,
+        #codeList {
+            width: 49%;
+            float: left;
+            white-space: pre-line;
+        }
+
+        #codeList li {
+            text-align: left;
+            align-items: start;
+            justify-content: left;
+        }
+    </style>
+</body>
+
+</html>

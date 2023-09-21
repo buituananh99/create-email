@@ -5,13 +5,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const emailList = document.getElementById('emailList');
   const codeList = document.getElementById('codeList');
   copyAllButton.addEventListener('click', function () {
-    const blob = new Blob([listAllEmail], { type: 'text/plain' });
-    const blobURL = URL.createObjectURL(blob);
-    const downloadLink = document.createElement('a');
-    downloadLink.href = blobURL;
-    downloadLink.download = 'emails.txt';
-    downloadLink.click();
+    const data = new Blob([listAllEmail], { type: 'text/plain' });
 
+    // Kiểm tra nếu trình duyệt hỗ trợ tính năng tạo đối tượng URL
+    if (window.URL && window.URL.createObjectURL) {
+      const blobURL = window.URL.createObjectURL(data);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = blobURL;
+      downloadLink.download = 'emails.txt';
+      downloadLink.style.display = 'none';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      window.URL.revokeObjectURL(blobURL);
+    } else {
+      // Trình duyệt không hỗ trợ tính năng tạo đối tượng URL
+      // Hiển thị nội dung email trong một cửa sổ hoặc thực hiện hành động tải xuống khác tùy bạn.
+      alert('Trình duyệt không hỗ trợ tính năng tạo đối tượng URL.');
+    }
   })
 
   runGetListEmail()
@@ -78,7 +89,7 @@ function getRandomEmails() {
   // Thiết lập giá trị mặc định cho count
   let count = inputNumEmail.value
 
-  if(count<=0) {
+  if (count <= 0) {
     alert("Vui lòng nhập lớn hơn 0")
     return
   }

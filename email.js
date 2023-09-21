@@ -1,62 +1,93 @@
 document.addEventListener('DOMContentLoaded', function () {
   const getEmailButton = document.getElementById('getEmailButton');
-  const copyAllButton = document.getElementById('copyAllEmailButton');
+  const copyAllButton = document.getElementById('downloadListEmailButton');
+  const inputNumEmail = document.getElementById('inputNumEmail');
   const emailList = document.getElementById('emailList');
   const codeList = document.getElementById('codeList');
-  let listAllEmail = ''
-  copyAllButton.addEventListener('click', function(){
-    copyToClipboard(listAllEmail);
+  copyAllButton.addEventListener('click', function () {
+    const blob = new Blob([listAllEmail], { type: 'text/plain' });
+    const blobURL = URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = blobURL;
+    downloadLink.download = 'emails.txt';
+    downloadLink.click();
+
   })
+
+  runGetListEmail()
 
   // Thêm sự kiện click vào nút "Get Email"
   getEmailButton.addEventListener('click', function () {
-    // Gọi hàm để lấy danh sách email ảo
-    getRandomEmails()
-      .then(data => {
-        // Xóa danh sách email trước khi hiển thị
-        emailList.innerHTML = '';
-        codeList.innerHTML = '';
-
-        data.forEach(email => {
-          listAllEmail += email + '\n';
-          // Tạo một phần tử danh sách và hiển thị email lên đó
-          const listItem = document.createElement('li');
-          listItem.textContent = email;
-          emailList.appendChild(listItem);
-
-          const codeItem = document.createElement('li');
-
-          // Thêm sự kiện click vào mỗi mục email để sao chép email
-          listItem.addEventListener('click', async function () {
-            copyToClipboard(email);
-            let intervalCode = setInterval(async () => {
-              const [login, domain] = email.split('@');
-              let idMessage = await getIdMessage(login, domain);
-
-              const code = await getBodyMessage(login, domain, idMessage);
-              if (code !== null) {
-                codeItem.textContent = code;
-                codeList.appendChild(codeItem);
-                codeItem.addEventListener('click', async function () {
-                  copyToClipboard(code);
-                })
-                clearInterval(intervalCode)
-              } else {
-                console.log('Không thể đọc email hoặc có lỗi.');
-              }
-            }, 2500)
-          });
-        });
-
-      })
-      .catch(error => {
-        console.error('Lỗi:', error);
-      });
+    runGetListEmail()
   });
+
 });
 
+function runGetListEmail() {
+  let listAllEmail = ''
+  getRandomEmails()
+    .then(data => {
+      // Xóa danh sách email trước khi hiển thị
+      emailList.innerHTML = '';
+      codeList.innerHTML = '';
+
+      data.forEach(email => {
+        listAllEmail += email + '\n';
+        // Tạo một phần tử danh sách và hiển thị email lên đó
+        const listItem = document.createElement('li');
+        listItem.textContent = email;
+        emailList.appendChild(listItem);
+
+        const codeItem = document.createElement('li');
+
+        // Thêm sự kiện click vào mỗi mục email để sao chép email
+        listItem.addEventListener('click', async function () {
+          copyToClipboard(email);
+          listItem.classList.add('currentCopy');
+          let intervalCode = setInterval(async () => {
+            const [login, domain] = email.split('@');
+            let idMessage = await getIdMessage(login, domain);
+
+            const code = await getBodyMessage(login, domain, idMessage);
+            if (code !== null) {
+              codeItem.textContent = code;
+              codeList.appendChild(codeItem);
+              codeItem.addEventListener('click', async function () {
+                copyToClipboard(code);
+                codeItem.classList.add('currentCopy');
+              })
+              clearInterval(intervalCode)
+            } else {
+              console.log('Không thể đọc email hoặc có lỗi.');
+            }
+          }, 2500)
+        });
+      });
+
+    })
+    .catch(error => {
+      console.error('Lỗi:', error);
+    });
+}
+
 function getRandomEmails() {
-  return fetch('https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=15')
+  // Kiểm tra xem có query parameter "n" hay không
+  const urlParams = new URLSearchParams(window.location.search);
+  const countParam = urlParams.get('n');
+
+  // Thiết lập giá trị mặc định cho count
+  let count = inputNumEmail.value
+
+  if(count<=0) {
+    alert("Vui lòng nhập lớn hơn 0")
+    return
+  }
+
+  // Nếu có query parameter "n", sử dụng giá trị từ query
+  if (countParam !== null) {
+    count = parseInt(countParam, 10);
+  }
+  return fetch(`https://www.1secmail.com/api/v1/?action=genRandomMailbox&count=${count}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Không thể lấy danh sách email');
@@ -115,8 +146,6 @@ async function getBodyMessage(login, domain, id) {
     return null;
   }
 }
-
-
 
 
 function getMaXacMinh(noiDung) {

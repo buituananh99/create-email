@@ -8,8 +8,9 @@
 
 <body>
     <header>
+        <input type="number" placeholder="Số email cần lấy" step="10" value="20" min="1", max="100" id="inputNumEmail">
         <button id="getEmailButton">Random Email</button>
-        <button id="copyAllEmailButton">Copy All Email</button>
+        <button id="downloadListEmailButton">Download List Email</button>
     </header>
     <div class="container">
         <ul id="emailList"></ul>
@@ -24,13 +25,15 @@
             margin-top: 20px;
         }
 
-        .container {
+        .body {
             width: 100%;
-            max-width: 600px;
+        }
+
+        .container {
+            width: 600px;
             margin: 0 auto;
             background-color: #f0f0f0;
             border: 1px solid #ddd;
-            height: 100%;
         }
 
         ul {
@@ -57,7 +60,43 @@
             align-items: start;
             justify-content: left;
         }
+
+        .currentCopy {
+            background-color: rgba(148, 145, 145, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            header {
+                text-align: center;
+            }
+
+            .container {
+                max-width: 100%;
+                width: 100%;
+                background-color: gray;
+            }
+
+            #getEmailButton,
+            #copyAllEmailButton {
+                display: block;
+                margin: 10px auto;
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+
+            #emailList,
+            #codeList {
+                width: 100%;
+                float: none;
+            }
+
+            li {
+                font-size: 16px;
+            }
+
+        }
     </style>
+
 </body>
 
 </html>
